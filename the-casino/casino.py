@@ -9,31 +9,29 @@ from blackjack import blackjack
 import easygui as eg
 import json
 
+# Constants
+PATH = 'the-casino/lib/user_chips.json'
+
 # %% load user function (TO BE MOVED TO casino.py)
     # username = ''
 def load_user_chips(username):
-    path = 'the-casino/lib/user_chips.json'
 
     try:
-        with open(path) as f:
+        with open(PATH) as f:
             all_user_chips = json.load(f)
     except:
         all_user_chips = {}
 
-    try:
-        user_chips = all_user_chips[username]
-    except:
-        user_chips = 0
+    user_chips = all_user_chips.get(username,0)
     
     return user_chips
 
 
 # %% update user chips in the file
 def update_user_chips(username, user_chips):
-    path = 'the-casino/lib/user_chips.json'
 
     try:
-        with open(path) as f:
+        with open(PATH) as f:
             all_user_chips = json.load(f)
     except:
         all_user_chips = {}
@@ -41,7 +39,7 @@ def update_user_chips(username, user_chips):
     #update current user chips
     all_user_chips[username] = user_chips
 
-    with open(path, mode='w+') as current_file:
+    with open(PATH, mode='w+') as current_file:
         current_file.write(json.dumps(all_user_chips))
 
 
