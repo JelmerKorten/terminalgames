@@ -1,20 +1,6 @@
 #choose your own adventure
-import time, sys, random
 #keep on going with this to create bigger
-
-
-speed_choice = 3
-#slow print to mimic typing speed
-def slow_print(some_string = '', end = '\n', speed_choice=3, wpm = 50):
-    random_number = random.uniform(0.7,1.3)
-    for letter in some_string:
-        sys.stdout.write(letter)
-        sys.stdout.flush()
-        time.sleep((3/speed_choice) * random_number/wpm * 3)
-    if end == '\n':
-        print('')
-    elif end == '':
-        print('', end='')
+from .util import slow_print, clear
 
 
 print('Before we start: How fast do you want this game to print the text?')

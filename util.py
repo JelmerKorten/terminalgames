@@ -1,7 +1,7 @@
 from sys import stdout
 from random import uniform
 from time import sleep
-from os import system, name
+from os import system
 
 def slow_print(some_string = '', end = '\n', speed_choice = 3, wpm = 50):
     random_number = uniform(0.7,1.3)
@@ -15,4 +15,4 @@ def slow_print(some_string = '', end = '\n', speed_choice = 3, wpm = 50):
         print('', end='')
 
 def clear():
-    system('cls' if name == 'nt' else 'clear')
+    system('cls || clear')
