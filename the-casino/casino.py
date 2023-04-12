@@ -22,7 +22,7 @@ def load_user_chips(username):
     except:
         all_user_chips = {}
 
-    user_chips = all_user_chips.get(username,0)
+    user_chips = all_user_chips.get(username,50)
     
     return user_chips
 
@@ -42,6 +42,13 @@ def update_user_chips(username, user_chips):
     with open(PATH, mode='w+') as current_file:
         current_file.write(json.dumps(all_user_chips))
 
+def buy_chips(user_chips):
+    chips_uplift = eg.integerbox(msg = "How many chips would you like to add?", title="Buy Chips",lowerbound=0,upperbound=200)
+    if isinstance(chips_uplift,int):
+        user_chips += chips_uplift
+
+    return user_chips
+
 
 
 # %% main()
@@ -59,7 +66,7 @@ def main():
 
 
     while True:
-        gameplay = eg.buttonbox(msg = menuprint, title = "Main Menu", choices=["Blackjack", "Roulette", "Slotmachines", "Poker", "Quit"])
+        gameplay = eg.buttonbox(msg = menuprint, title = "Main Menu", choices=["Blackjack", "Roulette", "Slotmachines", "Poker","Buy Chips", "Quit"])
         if gameplay == "Quit":
             eg.msgbox(msg = "Have a great day!", title = "Goodbye Message", ok_button="Bye!")
             print(f"User chips after quit msg box, before update call: {user_chips}")
@@ -71,7 +78,9 @@ def main():
         elif gameplay == "Blackjack":
             user_chips = blackjack(username, user_chips)
             print(f"User chips after blackjack return: {user_chips}")
-
+        elif gameplay == "Buy Chips":
+            user_chips = buy_chips(user_chips)
+            eg.msgbox(msg=f"You now have {user_chips}", title="Chip count", ok_button="Ok")
 
 
 if __name__ == '__main__':
