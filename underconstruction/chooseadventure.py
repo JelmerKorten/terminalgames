@@ -7,6 +7,9 @@ from time import sleep
 from os import system
 
 def slow_print(some_string = '', end = '\n', speed_choice = 3, wpm = 50):
+    if speed_choice == 6:
+        print(some_string)
+        return
     random_number = uniform(0.7,1.3)
     for letter in some_string:
         stdout.write(letter)
@@ -20,15 +23,19 @@ def slow_print(some_string = '', end = '\n', speed_choice = 3, wpm = 50):
 def clear():
     system('cls || clear')
 
+clear()
 print('Before we start: How fast do you want this game to print the text?')
-speed_choice = input('(1-5) ')
-if speed_choice.isdigit():
-    speed_choice = int(speed_choice)
-else:
-    quit()
 
+speed_choice = None
+while not speed_choice.isdigit():
+    speed_choice = input('slow (1-5) fast\n>')
+    if speed_choice.isdigit():
+        speed_choice = int(speed_choice)
+        break
+    else:
+        slow_print("Please provide a number", speed_choice=5)
 
-
+clear()
 slow_print('Do you want to go on an adventure?')
 playing = input('(yes/no) ').lower()
 if playing == 'no':
@@ -36,10 +43,13 @@ if playing == 'no':
 if playing == 'yes':
     slow_print('Alright, lets go!')
 
+clear()
 slow_print('What is your name adventurer?')
 name = input('')
 slow_print(f'Welcome {name}!')
+sleep(1)
 
+clear()
 slow_print('You are on a road with a T split ahead, which way do you go?')
 answer = input('(left/right) ').lower()
 if answer == 'right':
@@ -59,7 +69,11 @@ if answer == 'right':
         slow_print('a flash flood comes and a tree takes you out..')
 
 elif answer == 'left':
-    slow_print('picked left')
+    slow_print('You turn left and nearly get hit by a car.')
+    slow_print('As you duck away just in time you end up next to the road')
+    slow_print(".....", speed_choice=1)
+    
+
 else:
     slow_print('Not a valid option.. You keep going straight and smash your head on the wall')
     slow_print('You lose.')
