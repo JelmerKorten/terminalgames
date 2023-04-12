@@ -2,14 +2,17 @@
 
 # TODO:
 # - incorporate number of wins
-
+import os
 import random
+from time import sleep
 from math import ceil
-
+clear = lambda: os.system("clear || cls")
 user_wins = 0
 computer_wins = 0
 
-def print_scoreboard():
+def print_scoreboard(clr = "n"):
+    if clr == "y":
+        clear()
     print('|' + '-'*21 + '|')
     print('|----The Score is:----|')
     print('|--  You   VS   PC  --|')
@@ -17,6 +20,7 @@ def print_scoreboard():
     print('|' + '-'*21 + '|')
 
 options = ['rock', 'paper', 'scissors']
+clear()
 print('Best of how many games do you want to play?')
 best_of = input('(pick an odd number)\n')
 if best_of.isdigit():
@@ -28,7 +32,7 @@ max_wins = ceil(best_of/2)
 
 while user_wins < max_wins and computer_wins < max_wins:
     #print ScoreBoard
-    print_scoreboard()
+    print_scoreboard("y")
 
     user_input = input('Type: rock/paper/scissors (q to quit)\n').lower()
     if user_input == 'q':
@@ -70,11 +74,12 @@ while user_wins < max_wins and computer_wins < max_wins:
         print('Computer wins!')
         computer_wins += 1
         # total_wins += 1
+    sleep(1)
 
 print(f'You won: {user_wins} times')
 print(f'Computer won: {computer_wins} times')
 print('Final score is:')
-print_scoreboard()
+print_scoreboard("n")
 print('Thank you for playing.\nHave a great day now!')
 
 
