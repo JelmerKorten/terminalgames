@@ -6,3 +6,4 @@ __pycache__
 test.txt
 the-casino/testing.py
 lib/
+.DS_Store
