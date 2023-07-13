@@ -16,6 +16,8 @@ class Stack:
         self.cards = self.create_stack(decks)
         self.population = list(self.cards.keys())
         self.weights = list(self.cards.values())
+        self.full_count = decks*len(self.faces)
+        self.decks = decks
         
     def create_stack(self, decks = 4):
         card_deck = []
@@ -26,33 +28,48 @@ class Stack:
     
     def get_card(self):
         # get random card + it's count in stack
-        card = choices(self.population, self.weights)
+        card = choices(population=self.population, weights=self.weights)[0]
         card_count = self.cards.get(card)
         # update stack and weights for realistic odds
         self.cards.update({card:card_count -1})
         self.weights = list(self.cards.values())
         # return the chosen card
         return card
+    
+    def calc_cards_left(self):
+        return sum(self.weights)
+    
+    def check_shuffle(self):
+        # reshuffle if less than 40% left
+        if self.calc_cards_left() < 0.4 * self.full_count:
+            # create new stack
+            self.cards = self.create_stack(self.decks)
+            # update weights
+            self.weights = list(self.cards.values())
+            
 
 class Hand:
     def __init__(self, holder):
         self.owner = holder
         self.score = 0
-        self.Aces = []
+        # self.Aces = []
         self.cards = []
     
     def __repr__(self):
-        return f"{self.cards} worth {self.score}"
+        return f"{self.owner} has {self.cards} worth {self.score}"
     
     def reset(self):
         self.cards = []
         
     def add(self,card):
         self.cards.append(card)
-        if card.face == "Ace":
-            self.Aces.append(True)
+        # if card.face == "Ace":
+        #     self.Aces.append(True)
 
     def calc(self):
+        # reset score and aces
+        self.score = 0
+        self.Aces = []
         # for every card in the hand
         for card in self.cards:
             # if it's K,Q,J, 
@@ -62,7 +79,7 @@ class Hand:
                 else:
                     self.score += 10
             elif card.face == "Ace":
-                # self.Aces.append(True)
+                self.Aces.append(True)
                 if self.score + 11 > 21 and len(self.Aces) > 0:
                     self.score += 1
                     self.Aces.pop(0)
@@ -81,8 +98,6 @@ class Hand:
         self.score = self.calc()
         print(self)
         
-        
-
 
 class BlackJack:
     def __init__(self, player_name, coins):
@@ -92,6 +107,7 @@ class BlackJack:
         self.player_hand = Hand(self.name)
         self.house_hand = Hand(self.house_name)
         self.coins = coins
+        self.players_turn = True
 
     def first_deal(self):
         self.player_hand.add(self.stack.get_card())
@@ -103,6 +119,44 @@ class BlackJack:
         self.player_hand.display()
         # print house hand
         self.house_hand.display()
+        
+    def ask(self):
+        choice = input("Do you want to hit or stand?")
+        if choice in ("hit","h"):
+            self.player_hand.add(self.stack.get_card())
+        elif choice in ("stand","s"):
+            self.players_turn = False
+
+    def house_actions(self):
+        while self.house_hand.score < 17:
+            self.house_hand.add(self.stack.get_card())
+            self.house_hand.score = self.house_hand.calc()
+            self.house_hand.display()
+            
+
+    def check_house_bj_potential(self):
+        return self.house_hand.cards[0].face in ("Ace","King","Queen","Jack",10)
+
+    def check_player_blackjack(self):
+        return self.player_hand.score == 21
+
+
+# logic
+if __name__ == "__main__":
+    Game = BlackJack("kiwi",0)
+    Game.first_deal()
+    Game.show_state()
+    if Game.check_player_blackjack() and not Game.check_house_bj_potential():
+        print("You have blackjack and house can not get it! GZ")
+    while Game.players_turn:
+        Game.player_hand.display()
+        Game.ask()
+    Game.house_actions()
+    
+        
+    
+    
+    
 
 
 
