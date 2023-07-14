@@ -13,18 +13,19 @@ class Stack:
     def __init__(self, decks=4):
         self.faces = [2,3,4,5,6,7,8,9,10,'Jack','Queen','King','Ace']
         self.suits = ['Diamonds','Hearts','Clubs','Spades']
-        self.cards = self.create_stack(decks)
+        self.create_stack(decks)
         self.population = list(self.cards.keys())
         self.weights = list(self.cards.values())
         self.full_count = decks*len(self.faces)
         self.decks = decks
+
         
     def create_stack(self, decks = 4):
         card_deck = []
         for suit in self.suits:
             for face in self.faces:
                 card_deck.append(Card(suit,face))
-        return {card: decks for card in card_deck}
+        self.cards = {card: decks for card in card_deck}
     
     def get_card(self):
         # get random card + it's count in stack
@@ -43,7 +44,7 @@ class Stack:
         # reshuffle if less than 40% left
         if self.calc_cards_left() < 0.4 * self.full_count:
             # create new stack
-            self.cards = self.create_stack(self.decks)
+            self.create_stack(self.decks)
             # update weights
             self.weights = list(self.cards.values())
             
@@ -108,6 +109,7 @@ class BlackJack:
         self.house_hand = Hand(self.house_name)
         self.coins = coins
         self.players_turn = True
+        self.bid = 0
 
     def first_deal(self):
         self.player_hand.add(self.stack.get_card())
@@ -120,38 +122,76 @@ class BlackJack:
         # print house hand
         self.house_hand.display()
         
+    def place_bets(self):
+        print(f"You have {self.coins}")
+        while True:
+            bet = input("How much do you want to bet?\n>>")
+            # loop to validate input
+            if int(bet) <= self.coins:
+                return int(bet)
+            else:
+                print(f"You only have {self.coins}")
+        
+        
     def ask(self):
         choice = input("Do you want to hit or stand?")
         if choice in ("hit","h"):
             self.player_hand.add(self.stack.get_card())
         elif choice in ("stand","s"):
             self.players_turn = False
+            
+    def reset(self):
+        self.house_hand.reset()
+        self.player_hand.reset()
+        
+    def shuffle_stack(self):
+        self.stack.create_stack()
 
     def house_actions(self):
         while self.house_hand.score < 17:
             self.house_hand.add(self.stack.get_card())
             self.house_hand.score = self.house_hand.calc()
+            print(self.house_hand.score)
             self.house_hand.display()
             
-
     def check_house_bj_potential(self):
         return self.house_hand.cards[0].face in ("Ace","King","Queen","Jack",10)
 
     def check_player_blackjack(self):
         return self.player_hand.score == 21
+    
+    def calc_payout(self, factor):
+        return self.bid * factor
 
+    def payout(self,factor):
+        self.coins += self.calc_payout(factor)
 
 # logic
 if __name__ == "__main__":
     Game = BlackJack("kiwi",0)
-    Game.first_deal()
-    Game.show_state()
-    if Game.check_player_blackjack() and not Game.check_house_bj_potential():
-        print("You have blackjack and house can not get it! GZ")
-    while Game.players_turn:
-        Game.player_hand.display()
-        Game.ask()
-    Game.house_actions()
+    playing = True
+    while playing:
+        Game.first_deal()
+        Game.show_state()
+        if Game.check_player_blackjack() and not Game.check_house_bj_potential():
+            print("You have blackjack and house can not get it! GZ")
+            Game.payout(2.5)
+        while Game.players_turn and Game.player_hand.calc() < 21:
+            Game.player_hand.display()
+            Game.ask()
+        if Game.player_hand.score > 21:
+            print("Sorry, you busted, you lose your bet")
+            Game.reset()
+            again = input("Play again?\n>>").lower()
+            if again in ("yes", "y"):
+                continue
+            else:
+                playing = False
+                break
+        Game.house_actions()
+        Game.check_win()
+
+        playing = False
     
         
     
