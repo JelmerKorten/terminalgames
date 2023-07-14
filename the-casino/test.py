@@ -1,5 +1,5 @@
-dct = {"a":3, "b":2}
-card = "a"
-card_weight = dct.get(card)
-dct.update({card:card_weight - 1})
-print(dct)
+import pandas as pd
+
+df = pd.DataFrame.from_dict({"lat":[-10,-11,10], "lon":[-38,-38,-38]})
+df = df.loc[(df["lat"]== -10) & (df["lon"] == -38)]
+print(df)
