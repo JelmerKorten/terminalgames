@@ -47,6 +47,7 @@ class Stack:
             self.create_stack(self.decks)
             # update weights
             self.weights = list(self.cards.values())
+            print("Shuffling deck")
             
 
 class Hand:
@@ -143,6 +144,9 @@ class BlackJack:
     def reset(self):
         self.house_hand.reset()
         self.player_hand.reset()
+        self.player_hand.score = self.player_hand.calc()
+        self.house_hand.score = self.house_hand.calc()
+        self.players_turn = True
         
     def shuffle_stack(self):
         self.stack.create_stack()
@@ -165,12 +169,33 @@ class BlackJack:
 
     def payout(self,factor):
         self.coins += self.calc_payout(factor)
+    
+    def check_win(self):
+        # check who has highest score
+        if self.player_hand.score > 21:
+            print("Sorry, you've busted")
+        elif self.house_hand.score > 21:
+            print("House busted, you win!")
+        elif self.house_hand.score == self.player_hand.score:
+            print("It's a tie, you'll get your bet back.")
+        elif self.house_hand.score > self.player_hand.score:
+            print("House score higher, you lose.")
+        elif self.house_hand.score < self.player_hand.score:
+            print("You won!")
+        
+        self.stack.check_shuffle()
+        
+    def again(self):
+        choice = input("play again?\n>>")
+        return choice.lower() in ("y","yes")
+            
 
 # logic
 if __name__ == "__main__":
     Game = BlackJack("kiwi",0)
     playing = True
     while playing:
+        Game.reset()
         Game.first_deal()
         Game.show_state()
         if Game.check_player_blackjack() and not Game.check_house_bj_potential():
@@ -179,6 +204,7 @@ if __name__ == "__main__":
         while Game.players_turn and Game.player_hand.calc() < 21:
             Game.player_hand.display()
             Game.ask()
+        Game.show_state()
         if Game.player_hand.score > 21:
             print("Sorry, you busted, you lose your bet")
             Game.reset()
@@ -190,6 +216,8 @@ if __name__ == "__main__":
                 break
         Game.house_actions()
         Game.check_win()
+        if Game.again():
+            continue
 
         playing = False
     
