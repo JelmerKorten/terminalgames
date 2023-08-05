@@ -29,7 +29,6 @@ def draw_bg():
 
 
 def load_players():
-        
     # load player
     car = pygame.image.load("src/car2.png")
     car_width = car.get_width()
@@ -49,7 +48,7 @@ def load_players():
     enemy_loc.center = left_lane, HEIGHT*0.1
     return car, car_loc, enemy, enemy_loc, enemy_len
 
-
+# first screen
 draw_bg()
 pygame.display.update()
 car, car_loc, enemy, enemy_loc, enemy_len = load_players()
